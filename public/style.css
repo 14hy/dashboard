@@ -1,0 +1,28 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-home-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.page {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
