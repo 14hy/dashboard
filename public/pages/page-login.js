@@ -7,46 +7,6 @@ class PageLogin extends HTMLElement {
 		super();
     this.innerHTML = this.html;
   }
-  
-  connectedCallback() {    
-    const btn = this.querySelector(`.sign-in-form-button`);
-    
-    btn.addEventListener(`click`, this.eventClick.bind(this));
-  }
-  
-  eventClick(e) {
-    this.login();
-  }
-
-  async login() {
-    const id = this.querySelector(`#sign-in-form-username`).value;
-    const pwd = this.querySelector(`#sign-in-form-password`).value;
-    const modal = document.createElement(`modal-message`);
-
-    let fetchIsLogin;
-    let formData = new FormData();
-
-    modal.text = `로그인 정보가 부정확합니다.`;
-
-    formData.append(`username`, id);
-    formData.append(`password`, pwd);
-    
-    fetchIsLogin = await loadXhr({
-      url: `https://hanyang-chatbot-dot-cool-benefit-185923.appspot.com/admin/login/`,
-      method: `post`,
-      body: formData,
-      header: [],
-      isBlob: false,
-    }).catch(err => {
-      document.body.appendChild(modal);
-      throw new Error(err);
-    });
-
-    fetchIsLogin = JSON.parse(fetchIsLogin).jwt;
-
-    localStorage.setItem(`token`, JSON.stringify(fetchIsLogin));
-    connectRoute(`home`);
-  }
 
   get html() {
     return `
@@ -63,8 +23,54 @@ class PageLogin extends HTMLElement {
     </div>
     `;
   }
+  
+  connectedCallback() {    
+    const btn = this.querySelector(`.sign-in-form-button`);
+    const pwd = this.querySelector(`#sign-in-form-password`);
+    
+    btn.addEventListener(`click`, this.eventClick.bind(this));
+    pwd.addEventListener(`keydown`, this.eventKeydown.bind(this));
+  }
+  
+  eventClick() {
+    this.login();
+  }
 
+  eventKeydown(event) {
+    if (event.key === `Enter`) {
+      this.login();
+    }
+  }
 
+  async login() {
+    const id = this.querySelector(`#sign-in-form-username`).value;
+    const pwd = this.querySelector(`#sign-in-form-password`).value;
+    const modal = document.createElement(`modal-message`);
+
+    let fetchIsLogin;
+    let formData = new FormData();
+
+    modal.text = `로그인 정보가 부정확합니다.`;
+
+    formData.append(`username`, id);
+    formData.append(`password`, pwd);
+    
+    fetchIsLogin = await loadXhr({
+      url: `https://mhlee.engineer:5000/admin/login/`,
+      method: `post`,
+      body: formData,
+      header: [],
+      isBlob: false,
+    }).catch(err => {
+      document.body.appendChild(modal);
+      throw new Error(err);
+    });
+
+    fetchIsLogin = JSON.parse(fetchIsLogin).jwt;
+
+    localStorage.setItem(`token`, JSON.stringify(fetchIsLogin));
+    connectRoute(`home`);
+  }
 
   get style() {
     return `

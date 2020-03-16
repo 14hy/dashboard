@@ -1,14 +1,12 @@
+import { loadXhr } from '../utils/action.js';
+
 class ShuttleManager extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({ mode: `open` });
     this.shadowRoot.innerHTML = this.html;
-  }
-  
-  connectedCallback() {
-    const myTable = this.shadowRoot.querySelector("table");
-    new DataTable(myTable);
-	}
+    this.dataTable;
+  }   
 
   get html() {
     return `
@@ -39,8 +37,68 @@ class ShuttleManager extends HTMLElement {
     `;
   }
 
-  fetchShuttleData() {
-    fetch(``)
+  async connectedCallback() {
+    this.loadBusData();
+    // this.shadowRoot.querySelector(`main`).addEventListener(`click`, this.eventClickMain);
+  }
+
+  eventClickMain(event) {
+    const target = event.target;
+    
+    if (target.localName === `td`) {
+      console.log(target);
+    }
+  }
+
+  async loadBusData() {
+    const myTable = this.shadowRoot.querySelector("table");
+    let busData = await loadXhr({
+      url: `https://mhlee.engineer:5000/admin/shuttle/edit?season=%ED%95%99%EA%B8%B0%EC%A4%91&bus=%ED%95%9C%EB%8C%80%EC%95%9E&weekend=%EC%9B%94%EA%B8%88`,
+      method: `get`,
+      body: null,
+      isBlob: false,
+      header: [
+        {
+          key: `Authorization`,
+          value: `Bearer ${JSON.parse(localStorage.getItem(`token`))}`,
+        },
+      ],
+    }).catch(err => {
+      console.error(`버스 데이터 받아오기 실패`, err);
+    });
+
+    busData = JSON.parse(busData);
+
+    busData = busData.data.map(each => {
+      let result;
+
+      result = [
+        `${each[0] < 10 ? `0${each[0]}` : each[0]}:${each[1] < 10 ? `0${each[1]}` : each[1]}`, 
+        `${each[2] < 10 ? `0${each[2]}` : each[2]}:${each[3] < 10 ? `0${each[3]}` : each[3]}`, 
+        each[4],
+      ];
+
+      return result;
+    }),
+
+    this.dataTable = new DataTable(myTable, {
+      plugins: {
+        editable: {
+          enabled: true,
+        }
+      },
+      data: {
+        headings: [
+          `출발 시간`,
+          `도착 시간`,
+          `간격`,
+        ],
+        data: busData,
+      },
+      perPage: 10,   
+      perPageSelect: [5, 10, 20, 50, 100],
+      fixedHeight: true,
+    });    
   }
   
   get style() {
@@ -69,6 +127,18 @@ class ShuttleManager extends HTMLElement {
 
     .big-period label, .middle-period label, .small-period label {
       margin-right: 10px;
+    }
+
+    main {
+      overflow-y: scroll;
+    }
+
+    main table td input {
+      width: 100%;
+    }
+
+    main::-webkit-scrollbar {
+      display: none;
     }
 
     main > .dataTable-wrapper  {

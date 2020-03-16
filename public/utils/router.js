@@ -52,9 +52,9 @@ export async function connectRoute(pathName = _pathName) {
     renderHtml(`<page-login></page-login>`);
     return;
   }
-  console.log(_token);
+  
   _fetchLoginData = await loadXhr({
-    url: `https://hanyang-chatbot-dot-cool-benefit-185923.appspot.com/admin/login/`,
+    url: `https://mhlee.engineer:5000/admin/login/`,
     method: `get`,
     header: [
       {
