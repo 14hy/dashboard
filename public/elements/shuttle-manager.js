@@ -37,7 +37,7 @@ class ShuttleManager extends HTMLElement {
     `;
   }
 
-  async connectedCallback() {
+  connectedCallback() {
     this.loadBusData();
     this.shadowRoot.querySelectorAll(`[type='radio']`).forEach(each => {
       each.addEventListener(`click`, this.clickRadio.bind(this));
@@ -137,14 +137,14 @@ class ShuttleManager extends HTMLElement {
       height: 100vh;
     }
 
-    h1 {
-      
-    }
-
     header {
       display: grid;
       justify-content: center;
       align-items: center;
+      padding: 0 2rem;
+      width: 100%;
+      box-sizing: border-box;
+      grid-template-columns: 1fr;
     }
 
     .big-period, .middle-period, .small-period {
@@ -157,6 +157,7 @@ class ShuttleManager extends HTMLElement {
     }
 
     main {
+      display: flex;
       overflow-y: scroll;
     }
 
@@ -169,7 +170,8 @@ class ShuttleManager extends HTMLElement {
     }
 
     main > .dataTable-wrapper  {
-      height: 100%;
+      margin: 0 2rem;
+      width: 100%;
     }
     </style>
     `;

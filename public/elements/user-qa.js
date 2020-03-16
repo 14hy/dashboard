@@ -1,21 +1,18 @@
+import { loadXhr } from '../utils/action.js';
+
 class UserQA extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({ mode: `open` });
     this.shadowRoot.innerHTML = this.html;
+    this.data;
+    this.parseData;
 	}
-
-	connectedCallback() {  
-    this.render();
-	}
-
-  render() {
-    this.shadowRoot.innerHTML = this.html;    
-  }
 
   get html() {
     return `
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
     ${this.css}
 
     <div class="wrap">
@@ -41,10 +38,66 @@ class UserQA extends HTMLElement {
         </form>
       </div>
       <div class="table-wrap">
-      
+        <table></table>
       </div>
     </div>
     `;
+  }
+
+  async connectedCallback() {  
+    this.loadUserQA();
+	}
+
+  render() {
+    this.shadowRoot.innerHTML = this.html;    
+  }
+
+  async loadUserQA() {
+    const myTable = this.shadowRoot.querySelector("table");
+    let options;    
+
+    this.data = await loadXhr({
+      url: `https://mhlee.engineer:5000/admin/qa/`,
+      method: `get`,
+      body: null,
+      isBlob: false,
+      header: [
+        {
+          key: `Authorization`,
+          value: `Bearer ${JSON.parse(localStorage.getItem(`token`))}`,
+        },
+      ],
+    }).catch(err => {
+      console.error(`QA 데이터 받아오기 실패`, err);
+    });
+
+    this.data = JSON.parse(this.data); 
+
+    this.parseData = this.data.data.map(each => {
+      let { question, answer } = each;
+      return [question, answer];
+    });
+
+    options = {
+      data: {
+        headings: [
+          `질문`,
+          `답변`,
+        ],
+        data: this.parseData,
+      },
+      perPage: 10,
+      perPageSelect: [5, 10, 20, 50, 100],
+      fixedHeight: false,
+    };
+
+    if (this.dataTable) {
+      this.dataTable.destroy();
+      this.dataTable = new DataTable(myTable, options);
+      return;
+    }
+
+    this.dataTable = new DataTable(myTable, options);    
   }
   
   get css() {
@@ -128,6 +181,16 @@ class UserQA extends HTMLElement {
       form button:hover {
         background-color: #14679e;
         color: #fefefe;
+      }
+
+      .table-wrap {
+        display: flex;
+        overflow-y: scroll;
+      }
+
+      .dataTable-wrapper {
+        margin: 0 2rem;
+        width: 100%;
       }
     </style>
     `;
