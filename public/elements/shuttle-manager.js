@@ -138,7 +138,7 @@ class ShuttleManager extends HTMLElement {
     }
 
     h1 {
-      text-align: center;
+      
     }
 
     header {
