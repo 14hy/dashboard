@@ -1,4 +1,5 @@
 import '../elements/shuttle-manager.js';
+import '../elements/user-qa.js';
 
 class PageHome extends HTMLElement {
 	constructor() {
@@ -14,6 +15,7 @@ class PageHome extends HTMLElement {
     ${this.style}
     <div class="page page-home-wrap">
       <shuttle-manager></shuttle-manager>
+      <user-qa></user-qa>
     </div>
     `;
   }
