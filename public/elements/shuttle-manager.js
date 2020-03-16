@@ -16,18 +16,18 @@ class ShuttleManager extends HTMLElement {
       <h1>셔틀 관리</h1>
       <header>
         <div class="big-period">
-          <label for="big-checkbox-1"><input type="radio" name="big-checkbox" id="big-checkbox-1" checked>  학기</label>
-          <label for="big-checkbox-2"><input type="radio" name="big-checkbox" id="big-checkbox-2"> 방학</label>
-          <label for="big-checkbox-3"><input type="radio" name="big-checkbox" id="big-checkbox-3"> 계절학기</label>
+          <label for="big-checkbox-1"><input type="radio" name="big-checkbox" id="big-checkbox-1" value="학기중" checked>  학기</label>
+          <label for="big-checkbox-2"><input type="radio" name="big-checkbox" id="big-checkbox-2" value="방학"> 방학</label>
+          <label for="big-checkbox-3"><input type="radio" name="big-checkbox" id="big-checkbox-3" value="계절"> 계절학기</label>
         </div>
         <div class="middle-period">
-          <label for="middle-checkbox-1"><input type="radio" name="middle-checkbox" id="middle-checkbox-1" checked> 평일</label>
-          <label for="middle-checkbox-2"><input type="radio" name="middle-checkbox" id="middle-checkbox-2"> 주말</label>
+          <label for="middle-checkbox-1"><input type="radio" name="middle-checkbox" id="middle-checkbox-1" value="월금" checked> 평일</label>
+          <label for="middle-checkbox-2"><input type="radio" name="middle-checkbox" id="middle-checkbox-2" value="휴일"> 주말</label>
         </div>
         <div class="small-period">
-          <label for="small-checkbox-1"><input type="radio" name="small-checkbox" id="small-checkbox-1" checked> 한대앞</label>
-          <label for="small-checkbox-2"><input type="radio" name="small-checkbox" id="small-checkbox-2"> 예술인</label>
-          <label for="small-checkbox-3"><input type="radio" name="small-checkbox" id="small-checkbox-3"> 순환버스</label>
+          <label for="small-checkbox-1"><input type="radio" name="small-checkbox" id="small-checkbox-1" value="한대앞" checked> 한대앞</label>
+          <label for="small-checkbox-2"><input type="radio" name="small-checkbox" id="small-checkbox-2" value="예술인"> 예술인</label>
+          <label for="small-checkbox-3"><input type="radio" name="small-checkbox" id="small-checkbox-3" value="순환노선"> 순환노선</label>
         </div>
       </header>
       <main>
@@ -39,21 +39,40 @@ class ShuttleManager extends HTMLElement {
 
   async connectedCallback() {
     this.loadBusData();
-    // this.shadowRoot.querySelector(`main`).addEventListener(`click`, this.eventClickMain);
+    this.shadowRoot.querySelectorAll(`[type='radio']`).forEach(each => {
+      each.addEventListener(`click`, this.clickRadio.bind(this));
+    });
   }
 
-  eventClickMain(event) {
-    const target = event.target;
-    
-    if (target.localName === `td`) {
-      console.log(target);
-    }
+  clickRadio() {
+    this.loadBusData();
   }
 
   async loadBusData() {
     const myTable = this.shadowRoot.querySelector("table");
+    let season, bus, weekend;
+    let options;
+
+    this.shadowRoot.querySelectorAll(`.big-period [type='radio']`).forEach(each => {
+      if (each.checked === true) {
+        season = each.value;
+      }
+    });
+
+    this.shadowRoot.querySelectorAll(`.middle-period [type='radio']`).forEach(each => {
+      if (each.checked === true) {
+        bus = each.value;
+      }
+    });
+
+    this.shadowRoot.querySelectorAll(`.small-period [type='radio']`).forEach(each => {
+      if (each.checked === true) {
+        weekend = each.value;
+      }
+    });
+
     let busData = await loadXhr({
-      url: `https://mhlee.engineer:5000/admin/shuttle/edit?season=%ED%95%99%EA%B8%B0%EC%A4%91&bus=%ED%95%9C%EB%8C%80%EC%95%9E&weekend=%EC%9B%94%EA%B8%88`,
+      url: `https://mhlee.engineer:5000/admin/shuttle/edit?season=${season}&bus=${bus}&weekend=${weekend}`,
       method: `get`,
       body: null,
       isBlob: false,
@@ -79,9 +98,9 @@ class ShuttleManager extends HTMLElement {
       ];
 
       return result;
-    }),
+    });
 
-    this.dataTable = new DataTable(myTable, {
+    options = {
       plugins: {
         editable: {
           enabled: true,
@@ -98,7 +117,15 @@ class ShuttleManager extends HTMLElement {
       perPage: 10,   
       perPageSelect: [5, 10, 20, 50, 100],
       fixedHeight: true,
-    });    
+    };
+
+    if (this.dataTable) {
+      this.dataTable.destroy();
+      this.dataTable = new DataTable(myTable, options);    
+      return;
+    }
+
+    this.dataTable = new DataTable(myTable, options);    
   }
   
   get style() {
