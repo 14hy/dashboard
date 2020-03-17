@@ -39,9 +39,14 @@ class ShuttleManager extends HTMLElement {
 
   connectedCallback() {
     this.loadBusData();
+    this.shadowRoot.querySelector(`main`).addEventListener(`change`, this.changeMain.bind(this));
     this.shadowRoot.querySelectorAll(`[type='radio']`).forEach(each => {
       each.addEventListener(`click`, this.clickRadio.bind(this));
     });
+  }
+
+  changeMain() {
+    console.log(this.dataTable);
   }
 
   clickRadio() {
@@ -88,18 +93,6 @@ class ShuttleManager extends HTMLElement {
 
     busData = JSON.parse(busData);
 
-    busData = busData.data.map(each => {
-      let result;
-
-      result = [
-        `${each[0] < 10 ? `0${each[0]}` : each[0]}:${each[1] < 10 ? `0${each[1]}` : each[1]}`, 
-        `${each[2] < 10 ? `0${each[2]}` : each[2]}:${each[3] < 10 ? `0${each[3]}` : each[3]}`, 
-        each[4],
-      ];
-
-      return result;
-    });
-
     options = {
       plugins: {
         editable: {
@@ -112,7 +105,7 @@ class ShuttleManager extends HTMLElement {
           `도착 시간`,
           `간격`,
         ],
-        data: busData,
+        data: busData.data,
       },
       perPage: 10,   
       perPageSelect: [5, 10, 20, 50, 100],
