@@ -86,7 +86,7 @@ class UserQA extends HTMLElement {
         ],
         data: this.parseData,
       },
-      perPage: 10,
+      perPage: 5,
       perPageSelect: [5, 10, 20, 50, 100],
       fixedHeight: false,
     };
@@ -105,12 +105,12 @@ class UserQA extends HTMLElement {
     <style>
       .wrap {
         display: grid;
-        grid-template-rows: 10vh 20vh 70vh;
+        grid-template-rows: 10vh 15vh auto;
+        height: 100%;
       }
       
       .form-icons {
         text-align: center;
-        height: 100%;
       }
 
       .input-form {
@@ -118,7 +118,8 @@ class UserQA extends HTMLElement {
         grid-template-areas: 
           'a b' 
           'c b';
-        background-color: #1779ba;
+        width: 100%;
+        grid-template-columns: 10fr 2fr;        
       }
 
       .input-q {
@@ -136,16 +137,14 @@ class UserQA extends HTMLElement {
 
       .form-icons .input-group-label {
         padding: 0 1rem;
-        border: 1px solid #cacaca;
-        background: #e6e6e6;
+        border: none;
         color: #0a0a0a;
         text-align: center;
         white-space: nowrap;
         display: flex;
         flex: 0 0 auto;
         align-items: center;
-        background-color: #1779ba;
-        border-color: #1779ba;
+        background-color: #3d454f;
         height: 2rem;
       }
 
@@ -164,7 +163,7 @@ class UserQA extends HTMLElement {
       }
 
       .form-icons .input-group-field {
-        border-color: #1779ba;
+        border: none;
         width: 100%;
         padding-left: 1rem;
       }
@@ -187,21 +186,19 @@ class UserQA extends HTMLElement {
         margin: 0 0 1rem 0;
         padding: 0.85em 1em;
         -webkit-appearance: none;
-        border: 1px solid transparent;
-        border-radius: 0;
         transition: background-color 0.25s ease-out, color 0.25s ease-out;
         font-size: 0.9rem;
         line-height: 1;
         text-align: center;
         cursor: pointer;
-        background-color: #1779ba;
+        background-color: #3d454f;
         color: #fefefe;
         border-radius: 3px;
+        border: none;
       }
 
       form button:hover {
-        background-color: #14679e;
-        color: #fefefe;
+        filter: brightness(0.9);
       }
 
       .table-wrap {
@@ -212,6 +209,12 @@ class UserQA extends HTMLElement {
       .dataTable-wrapper {
         margin: 0 2rem;
         width: 100%;
+      }
+
+      .dataTable-input,
+      .dataTable-selector {
+        border-radius: 5px;
+        border: none;
       }
     </style>
     `;

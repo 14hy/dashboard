@@ -6,6 +6,9 @@ class ShuttleManager extends HTMLElement {
 		this.attachShadow({ mode: `open` });
     this.shadowRoot.innerHTML = this.html;
     this.dataTable;
+    this.bigPeriod;
+    this.middlePeriod;
+    this.smallPeriod;
   }   
 
   get html() {
@@ -13,21 +16,21 @@ class ShuttleManager extends HTMLElement {
     <link href="https://unpkg.com/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
     ${this.style}
     <div class="wrap">
-      <h1>셔틀 관리</h1>
+      <h1>셔틀버스 시간 관리</h1>
       <header>
         <div class="big-period">
-          <label for="big-checkbox-1"><input type="radio" name="big-checkbox" id="big-checkbox-1" value="학기중" checked>  학기</label>
-          <label for="big-checkbox-2"><input type="radio" name="big-checkbox" id="big-checkbox-2" value="방학"> 방학</label>
-          <label for="big-checkbox-3"><input type="radio" name="big-checkbox" id="big-checkbox-3" value="계절"> 계절학기</label>
+          <input type="radio" name="big-checkbox" id="big-checkbox-1" value="학기중" checked><label for="big-checkbox-1">학기</label>
+          <input type="radio" name="big-checkbox" id="big-checkbox-2" value="방학"><label for="big-checkbox-2">방학</label>
+          <input type="radio" name="big-checkbox" id="big-checkbox-3" value="계절"><label for="big-checkbox-3">계절학기</label>
         </div>
         <div class="middle-period">
-          <label for="middle-checkbox-1"><input type="radio" name="middle-checkbox" id="middle-checkbox-1" value="월금" checked> 평일</label>
-          <label for="middle-checkbox-2"><input type="radio" name="middle-checkbox" id="middle-checkbox-2" value="휴일"> 주말</label>
+        <input type="radio" name="middle-checkbox" id="middle-checkbox-1" value="월금" checked><label for="middle-checkbox-1">평일</label>
+        <input type="radio" name="middle-checkbox" id="middle-checkbox-2" value="휴일"><label for="middle-checkbox-2">주말</label>
         </div>
         <div class="small-period">
-          <label for="small-checkbox-1"><input type="radio" name="small-checkbox" id="small-checkbox-1" value="한대앞" checked> 한대앞</label>
-          <label for="small-checkbox-2"><input type="radio" name="small-checkbox" id="small-checkbox-2" value="예술인"> 예술인</label>
-          <label for="small-checkbox-3"><input type="radio" name="small-checkbox" id="small-checkbox-3" value="순환노선"> 순환노선</label>
+          <input type="radio" name="small-checkbox" id="small-checkbox-1" value="한대앞" checked><label for="small-checkbox-1">한대앞</label>
+          <input type="radio" name="small-checkbox" id="small-checkbox-2" value="예술인"><label for="small-checkbox-2">예술인</label>
+          <input type="radio" name="small-checkbox" id="small-checkbox-3" value="순환노선"><label for="small-checkbox-3">순환노선</label>
         </div>
       </header>
       <main>
@@ -45,8 +48,39 @@ class ShuttleManager extends HTMLElement {
     });
   }
 
-  changeMain() {
-    console.log(this.dataTable);
+  async changeMain() {
+    let data = this.dataTable.data.map(tr => {
+      let array = [...tr.querySelectorAll(`td`)].map((td, i) => {
+        if (i === 2) {
+          return Number(td.textContent);
+        }
+        return td.textContent
+      });
+      return array;
+    });
+
+    let formData = new FormData();
+    formData.append(`data`, JSON.stringify(data));
+    formData.append(`season`, this.bigPeriod);
+    formData.append(`bus`, this.smallPeriod);
+    formData.append(`weekend`, this.middlePeriod);
+
+    let postBusData = await loadXhr({
+      url: `https://mhlee.engineer:5000/admin/shuttle/edit`,
+      method: `post`,
+      body: formData,
+      isBlob: false,
+      header: [
+        {
+          key: `Authorization`,
+          value: `Bearer ${JSON.parse(localStorage.getItem(`token`))}`,
+        },
+      ],
+    }).catch(err => {
+      console.error(`버스 데이터 받아오기 실패`, err);
+    });
+    console.log(JSON.stringify(data));
+    console.info(`success`, postBusData);
   }
 
   clickRadio() {
@@ -61,18 +95,21 @@ class ShuttleManager extends HTMLElement {
     this.shadowRoot.querySelectorAll(`.big-period [type='radio']`).forEach(each => {
       if (each.checked === true) {
         season = each.value;
+        this.bigPeriod = each.value;
       }
     });
 
     this.shadowRoot.querySelectorAll(`.middle-period [type='radio']`).forEach(each => {
       if (each.checked === true) {
         bus = each.value;
+        this.middlePeriod = each.value;
       }
     });
 
     this.shadowRoot.querySelectorAll(`.small-period [type='radio']`).forEach(each => {
       if (each.checked === true) {
         weekend = each.value;
+        this.smallPeriod = each.value;
       }
     });
 
@@ -90,7 +127,7 @@ class ShuttleManager extends HTMLElement {
     }).catch(err => {
       console.error(`버스 데이터 받아오기 실패`, err);
     });
-
+console.log(busData);
     busData = JSON.parse(busData);
 
     options = {
@@ -107,14 +144,14 @@ class ShuttleManager extends HTMLElement {
         ],
         data: busData.data,
       },
-      perPage: 10,   
+      perPage: 5,   
       perPageSelect: [5, 10, 20, 50, 100],
-      fixedHeight: true,
+      fixedHeight: false,
     };
 
     if (this.dataTable) {
       this.dataTable.destroy();
-      this.dataTable = new DataTable(myTable, options);    
+      this.dataTable = new DataTable(myTable, options);
       return;
     }
 
@@ -126,8 +163,8 @@ class ShuttleManager extends HTMLElement {
     <style>
     .wrap {
       display: grid;
-      grid-template-rows: 10vh 20vh 70vh;
-      height: 100vh;
+      grid-template-rows: 10vh 15vh auto;
+      height: 100%;
     }
 
     header {
@@ -141,12 +178,34 @@ class ShuttleManager extends HTMLElement {
     }
 
     .big-period, .middle-period, .small-period {
-      display: flex;
-      align-items: center;
+      display: grid;
+      justify-content: space-evenly;
+      border-radius: 10px;
+      background-color: rgb(152, 147, 147);
+      color: rgb(255, 255, 255);
+      grid-template-columns: repeat(3, 1fr);
+      text-align: center;
+      transition: all 200ms ease;
+    }
+
+    .big-period input, .middle-period input, .small-period input {
+      display: none;
     }
 
     .big-period label, .middle-period label, .small-period label {
       margin-right: 10px;
+      border-radius: 10px;
+      margin: 0;
+    }
+
+    .big-period label:hover, 
+    .middle-period label:hover, 
+    .small-period label:hover {
+      background-color: #3d454f;
+    }
+
+    input:checked + label {
+      background-color: #3d454f;
     }
 
     main {
@@ -165,6 +224,12 @@ class ShuttleManager extends HTMLElement {
     main > .dataTable-wrapper  {
       margin: 0 2rem;
       width: 100%;
+    }
+    
+    .dataTable-input,
+    .dataTable-selector {
+      border-radius: 5px;
+      border: none;
     }
     </style>
     `;
