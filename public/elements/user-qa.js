@@ -20,20 +20,20 @@ class UserQA extends HTMLElement {
       <div class="input-wrap">
         <div class="form-icons">
           <form class="input-form">
-            <div class="input-group">
+            <div class="input-group input-q">
               <span class="input-group-label">
                 <i class="fa fa-question-circle"></i>
               </span>
               <input class="input-group-field" type="text" placeholder="질문">
             </div>
         
-            <div class="input-group">
+            <div class="input-group input-a">
               <span class="input-group-label">
                 <i class="fa fa-comment-dots"></i>
               </span>
               <input class="input-group-field" type="text" placeholder="답변">
             </div>        
-            <button type="button" class="button expanded">추가하기</button>
+            <button type="button" class="button expanded input-b">추가하기</button>
           </div>                
         </form>
       </div>
@@ -113,6 +113,27 @@ class UserQA extends HTMLElement {
         height: 100%;
       }
 
+      .input-form {
+        display: grid;
+        grid-template-areas: 
+          'a b' 
+          'c b';
+        background-color: #1779ba;
+      }
+
+      .input-q {
+        grid-area: a;
+      }
+
+      .input-a {
+        grid-area: c;
+      }
+
+      .input-b {
+        grid-area: b;
+        margin-bottom: 0;
+      }
+
       .form-icons .input-group-label {
         padding: 0 1rem;
         border: 1px solid #cacaca;
@@ -137,7 +158,6 @@ class UserQA extends HTMLElement {
       .input-group {
         display: flex;
         width: 100%;
-        margin-bottom: 1rem;
         align-items: stretch;
         border-radius: 5px;
         overflow: hidden;
