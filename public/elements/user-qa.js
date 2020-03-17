@@ -110,6 +110,7 @@ class UserQA extends HTMLElement {
       
       .form-icons {
         text-align: center;
+        height: 100%;
       }
 
       .form-icons .input-group-label {
