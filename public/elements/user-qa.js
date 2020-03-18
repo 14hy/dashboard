@@ -46,10 +46,51 @@ class UserQA extends HTMLElement {
 
   async connectedCallback() {  
     this.loadUserQA();
+    
+    this.shadowRoot.querySelector(`.input-b`).addEventListener(`click`, this.clickBtn.bind(this));
+    this.shadowRoot.querySelector(`.input-a input`).addEventListener(`keydown`, this.eventKeydown.bind(this));
 	}
 
   render() {
     this.shadowRoot.innerHTML = this.html;    
+  }
+
+  eventKeydown(event) {
+    if (event.key === `Enter`) {
+      this.clickBtn();
+    }
+  }
+
+  async clickBtn() {
+    const question = this.shadowRoot.querySelector(`.input-q input`);
+    const answer = this.shadowRoot.querySelector(`.input-a input`);
+
+    let formData = new FormData();
+    formData.append(`question`, question.value);
+    formData.append(`answer`, answer.value);
+
+    let postQaData = await loadXhr({
+      url: `https://mhlee.engineer:5000/admin/qa/`,
+      method: `post`,
+      body: formData,
+      isBlob: false,
+      header: [
+        {
+          key: `Authorization`,
+          value: `Bearer ${JSON.parse(localStorage.getItem(`token`))}`,
+        },
+      ],
+    }).catch(err => {
+      throw new Eror(`질문 데이터 생성 실패`, err);
+    });    
+
+    question.value = ``;
+    answer.value = ``;
+
+    this.loadUserQA();
+
+    console.info(`send:`, JSON.stringify(postQaData));
+    console.info(`success: `, postQaData);
   }
 
   async loadUserQA() {
@@ -74,16 +115,17 @@ class UserQA extends HTMLElement {
     this.data = JSON.parse(this.data); 
 
     this.parseData = this.data.data.map(each => {
-      let { question, answer } = each;
-      return [question, answer];
+      let { id, question, answer } = each;
+      return [id, question, answer];
     });
 
     options = {
       data: {
         headings: [
+          `ID`,
           `질문`,
           `답변`,
-        ],
+        ],        
         data: this.parseData,
       },
       perPage: 5,
@@ -94,10 +136,12 @@ class UserQA extends HTMLElement {
     if (this.dataTable) {
       this.dataTable.destroy();
       this.dataTable = new DataTable(myTable, options);
+      this.dataTable.columns().hide([0]);
       return;
     }
 
-    this.dataTable = new DataTable(myTable, options);    
+    this.dataTable = new DataTable(myTable, options);
+    this.dataTable.columns().hide([0]);
   }
   
   get css() {
