@@ -40,16 +40,19 @@ class ShuttleManager extends HTMLElement {
     `;
   }
 
-  connectedCallback() {
-    this.loadBusData();
-    this.shadowRoot.querySelector(`main`).addEventListener(`change`, this.changeMain.bind(this));
+  async connectedCallback() {
+    await this.loadBusData();
+    this.dataTable.on(`editable.save.cell`, () => {
+      this.changeMain();
+    });
+
     this.shadowRoot.querySelectorAll(`[type='radio']`).forEach(each => {
       each.addEventListener(`click`, this.clickRadio.bind(this));
     });
   }
 
   async changeMain() {
-    let data = this.dataTable.data.map(tr => {
+    let data = this.dataTable.activeRows.map(tr => {
       let array = [...tr.querySelectorAll(`td`)].map((td, i) => {
         if (i === 2) {
           return Number(td.textContent);
@@ -79,8 +82,8 @@ class ShuttleManager extends HTMLElement {
     }).catch(err => {
       console.error(`버스 데이터 받아오기 실패`, err);
     });
-    console.log(JSON.stringify(data));
-    console.info(`success`, postBusData);
+    console.info(`send:`, JSON.stringify(data));
+    console.info(`success: `, postBusData);
   }
 
   clickRadio() {
@@ -127,7 +130,7 @@ class ShuttleManager extends HTMLElement {
     }).catch(err => {
       console.error(`버스 데이터 받아오기 실패`, err);
     });
-console.log(busData);
+
     busData = JSON.parse(busData);
 
     options = {
