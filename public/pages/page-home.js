@@ -12,6 +12,7 @@ class PageHome extends HTMLElement {
     return `
     ${this.style}
     <div class="page page-home-wrap">
+      <button type="button" class="btn-logout">로그아웃</button>
       <button type="button" class="btn-aside"><i class="fas fa-bars"></i></button>
       <aside>
         <h2><i class="fa fa-cat"></i> 메뉴다냥~</h2>
@@ -35,6 +36,10 @@ class PageHome extends HTMLElement {
 
   connectedCallback() {
     this.querySelector(`.side-menu`).addEventListener(`click`, this.clickUl.bind(this));
+    this.querySelector(`.btn-logout`).addEventListener(`click`, () => {
+      localStorage.removeItem(`token`);
+      location.reload();
+    });
   }
   
   clickUl(event) {
@@ -59,6 +64,18 @@ class PageHome extends HTMLElement {
   get style() {
     return `
     <style>
+    .btn-logout {
+      display: block;
+      position: fixed;
+      top: 1rem;
+      right: 5rem;
+      border: none;
+      background-color: transparent;
+      color: rgb(255, 255, 255);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
     .show {
       display: block;  
     }
