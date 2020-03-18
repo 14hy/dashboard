@@ -11,10 +11,11 @@ class UserTalk extends HTMLElement {
 
   get html() {
     return `
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
     ${this.style}
     <div class="wrap">
-      <h1>유저 대화내용</h1>
+      <h1><i class="fa fa-comments"></i> 유저 대화내용</h1>
       <main>
         <table></table>
       </main>
@@ -83,6 +84,22 @@ class UserTalk extends HTMLElement {
   get style() {
     return `
     <style>
+    h1 {
+      padding-left: 2rem;
+    }
+    
+    table tr > th:nth-child(1) {
+      width: calc(50% - 50px) !important;
+    }
+
+    table tr > th:nth-child(2) {
+      width: calc(50% - 50px) !important;
+    }
+
+    table tr > th:nth-child(3) {
+      width: 100px !important;
+    }
+
     .wrap {
       display: grid;
       grid-template-rows: 10vh auto;

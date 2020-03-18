@@ -13,10 +13,11 @@ class ShuttleManager extends HTMLElement {
 
   get html() {
     return `
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" rel="stylesheet">
     <link href="https://unpkg.com/vanilla-datatables@latest/dist/vanilla-dataTables.min.css" rel="stylesheet" type="text/css">
     ${this.style}
     <div class="wrap">
-      <h1>셔틀버스 시간 관리</h1>
+      <h1><i class="fa fa-bus-alt"></i> 셔틀버스 시간 관리</h1>
       <header>
         <div class="big-period">
           <input type="radio" name="big-checkbox" id="big-checkbox-1" value="학기중" checked><label for="big-checkbox-1">학기</label>
@@ -164,6 +165,10 @@ class ShuttleManager extends HTMLElement {
   get style() {
     return `
     <style>
+    h1 {
+      padding-left: 2rem;
+    }
+    
     .wrap {
       display: grid;
       grid-template-rows: 10vh 15vh auto;

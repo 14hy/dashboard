@@ -16,7 +16,7 @@ class UserQA extends HTMLElement {
     ${this.css}
 
     <div class="wrap">
-      <h1>QA 추가</h1>
+      <h1><i class="fa fa-question-circle"></i> QA 추가</h1>
       <div class="input-wrap">
         <div class="form-icons">
           <form class="input-form">
@@ -45,14 +45,50 @@ class UserQA extends HTMLElement {
   }
 
   async connectedCallback() {  
-    this.loadUserQA();
+    await this.loadUserQA();
     
     this.shadowRoot.querySelector(`.input-b`).addEventListener(`click`, this.clickBtn.bind(this));
     this.shadowRoot.querySelector(`.input-a input`).addEventListener(`keydown`, this.eventKeydown.bind(this));
+    this.shadowRoot.querySelector(`.table-wrap`).addEventListener(`click`, this.clickBtnTrash.bind(this));    
 	}
 
   render() {
     this.shadowRoot.innerHTML = this.html;    
+  }
+
+  async clickBtnTrash(event) {
+    let id;
+    let deleteData;
+    let formData = new FormData();
+    let pageNum = this.dataTable.currentPage;
+    const tr = event.target.closest(`tr`);
+    if (!event.target.classList.contains(`btn-trash`)) {
+      return;
+    }
+
+    id = tr.querySelector(`td`).textContent;
+    formData.append(`doc_id`, id);
+    
+    deleteData = await loadXhr({
+      url: `https://mhlee.engineer:5000/admin/qa/`,
+      method: `delete`,
+      body: formData,
+      isBlob: false,
+      header: [
+        {
+          key: `Authorization`,
+          value: `Bearer ${JSON.parse(localStorage.getItem(`token`))}`,
+        },
+      ],
+    }).catch(err => {
+      throw new Error(`질문 데이터 삭제 실패`, err);
+    });
+
+    await this.loadUserQA();
+    this.dataTable.page(pageNum);
+
+    console.info(`send:`, JSON.stringify(deleteData));
+    console.info(`success: `, deleteData);
   }
 
   eventKeydown(event) {
@@ -81,7 +117,7 @@ class UserQA extends HTMLElement {
         },
       ],
     }).catch(err => {
-      throw new Eror(`질문 데이터 생성 실패`, err);
+      throw new Error(`질문 데이터 생성 실패`, err);
     });    
 
     question.value = ``;
@@ -120,6 +156,11 @@ class UserQA extends HTMLElement {
     });
 
     options = {
+      plugins: {
+        editable: {
+          enabled: false,          
+        },
+      },
       data: {
         headings: [
           `ID`,
@@ -136,17 +177,77 @@ class UserQA extends HTMLElement {
     if (this.dataTable) {
       this.dataTable.destroy();
       this.dataTable = new DataTable(myTable, options);
-      this.dataTable.columns().hide([0]);
+      this.createBtn();
+      this.dataTable.on('datatable.sort', () => {
+        this.createTrashTd();
+      });
       return;
     }
 
     this.dataTable = new DataTable(myTable, options);
-    this.dataTable.columns().hide([0]);
+    this.createBtn();
+    this.dataTable.on('datatable.sort', () => {
+      this.createTrashTd();
+    });
+  }
+
+  createBtn() {
+    this.dataTable.columns().add({
+      heading: `삭제`,
+      data: Array(this.dataTable.data.length),
+      sortable: false,
+    });    
+    this.createTrashTd();
+  }
+
+  createTrashTd() {
+    this.dataTable.activeRows.forEach(tr => {
+      const td = document.createElement(`td`);
+      td.innerHTML = `
+      <button class="btn-trash" type="button"><i class="far fa-trash-alt"></i></button>
+      `;
+      tr.appendChild(td);
+    })
   }
   
   get css() {
     return `
     <style>
+      h1 {
+        padding-left: 2rem;
+      }
+
+      .btn-trash {
+        display: block;
+        margin: 0;
+        vertical-align: middle;
+        padding: 0.85em 1em;
+        transition: background-color 0.25s ease-out, color 0.25s ease-out;
+        font-size: 0.7rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #3d454f;
+        color: #fefefe;
+        border-radius: 3px;
+        border: none;
+      }
+
+      .btn-trash:hover {
+        filter: brightness(0.9);
+      }
+
+      table tr > th:nth-child(1) {
+        display: none;
+      }
+
+      table tr > td:nth-child(1) {
+        display: none;
+      }
+    
+      table tr > th:nth-child(4) {
+        width: 50px;
+      }
+
       .wrap {
         display: grid;
         grid-template-rows: 10vh 15vh auto;

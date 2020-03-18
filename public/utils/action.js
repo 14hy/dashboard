@@ -22,7 +22,7 @@ export const loadXhr = (obj = {
 
 	req.onreadystatechange = () => {
 		if (req.readyState === XMLHttpRequest.DONE) {
-			if (req.status === 200 || req.status === 201) {				
+			if (req.status === 200 || req.status === 201 || req.status === 202) {				
 				if (obj.isBlob) {
 					resolve(req.response);
 				} else {

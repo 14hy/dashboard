@@ -12,6 +12,7 @@ class PageHome extends HTMLElement {
     return `
     ${this.style}
     <div class="page page-home-wrap">
+      <button type="button" class="btn-aside"><i class="fas fa-bars"></i></button>
       <aside>
         <h2><i class="fa fa-cat"></i> 메뉴다냥~</h2>
         <ul class="side-menu">
@@ -28,7 +29,7 @@ class PageHome extends HTMLElement {
     </div>
     <video autoplay loop poster="wind.jpg">
       <source src="img/wind.webm" type="video/webm">
-    </video>
+    </video>    
     `;
   }
 
@@ -89,6 +90,10 @@ class PageHome extends HTMLElement {
       display: grid;
       grid-template-columns: 15rem auto;
     }
+    
+    .btn-aside {
+      display: none;
+    }
 
     aside {
       font-family: 'Noto Sans KR', sans-serif;
@@ -99,6 +104,7 @@ class PageHome extends HTMLElement {
       background-color: #3d454f;
       border-radius: 2px;
       color: rgb(255, 255, 255);
+      z-index: 1000;
     }
 
     aside h2 {
@@ -145,6 +151,40 @@ class PageHome extends HTMLElement {
       object-fit: cover;
       z-index: -1000;
       filter: brightness(0.5);
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .page aside {
+        left: -15rem;
+        position: fixed;
+        height: 100vh;
+        width: 15rem;
+      }
+
+      .btn-aside {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 5rem;
+        border: none;
+        background-color: transparent;
+        color: rgb(255, 255, 255);
+        font-size: 2rem;
+        cursor: pointer;
+      }
+
+      .btn-aside:focus + aside {
+        left: 0rem;
+      }
+
+      .page aside:hover {
+        left: 0rem;
+      }
     }
 
     @keyframes opac {
