@@ -215,6 +215,7 @@ class UserQA extends HTMLElement {
     <style>
       h1 {
         padding-left: 2rem;
+        font-size: 1.5rem;
       }
 
       .btn-trash {
@@ -263,7 +264,6 @@ class UserQA extends HTMLElement {
         grid-template-areas: 
           'a b' 
           'c b';
-        width: 100%;
         grid-template-columns: 10fr 2fr;        
       }
 

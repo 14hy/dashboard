@@ -47,7 +47,7 @@ class ModalMessage extends HTMLElement {
         width: 80vw;
         top: -10vh;
         left: 10vw;
-        font-size: 2rem;
+        font-size: 1rem;
         animation: pop 2000ms ease-in-out;
       }      
 

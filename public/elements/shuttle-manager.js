@@ -167,6 +167,7 @@ class ShuttleManager extends HTMLElement {
     <style>
     h1 {
       padding-left: 2rem;
+      font-size: 1.5rem;
     }
     
     .wrap {
