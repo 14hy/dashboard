@@ -30,6 +30,7 @@ class PageHome extends HTMLElement {
     </div>
     <video autoplay loop poster="wind.jpg">
       <source src="img/wind.webm" type="video/webm">
+      <source src="img/wind.mp4" type="video/mp4">
     </video>    
     `;
   }

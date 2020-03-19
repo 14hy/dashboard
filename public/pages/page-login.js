@@ -22,6 +22,7 @@ class PageLogin extends HTMLElement {
       </div>
       <video autoplay loop poster="cat.jpg">
         <source src="img/cat.webm" type="video/webm">
+        <source src="img/cat.mp4" type="video/mp4">
       </video>
     </div>
     `;
