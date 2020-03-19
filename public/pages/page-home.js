@@ -68,13 +68,14 @@ class PageHome extends HTMLElement {
     .btn-logout {
       display: block;
       position: fixed;
-      top: 1rem;
-      right: 5rem;
+      top: 3vh;
+      right: 12vw;
       border: none;
       background-color: transparent;
       color: rgb(255, 255, 255);
       font-size: 1rem;
       cursor: pointer;
+      z-index: 10000;
     }
 
     .show {
@@ -187,8 +188,8 @@ class PageHome extends HTMLElement {
       .btn-aside {
         display: block;
         position: fixed;
-        top: 1rem;
-        left: 5rem;
+        top: 1vh;
+        left: 3vw;
         border: none;
         background-color: transparent;
         color: rgb(255, 255, 255);

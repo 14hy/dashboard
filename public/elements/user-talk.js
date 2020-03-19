@@ -86,6 +86,7 @@ class UserTalk extends HTMLElement {
     <style>
     h1 {
       padding-left: 2rem;
+      font-size: 1.5rem;
     }
     
     table tr > th:nth-child(1) {
