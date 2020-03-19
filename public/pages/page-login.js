@@ -20,9 +20,8 @@ class PageLogin extends HTMLElement {
         <input type="password" class="sign-in-form-password" id="sign-in-form-password">
         <button class="sign-in-form-button">로그인</button>
       </div>
-      <video autoplay loop poster="cat.jpg">
+      <video class="video-background" autoplay loop muted playsInline poster="cat.jpg">
         <source src="img/cat.webm" type="video/webm">
-        <source src="img/cat.mp4" type="video/mp4">
       </video>
     </div>
     `;
@@ -82,7 +81,7 @@ class PageLogin extends HTMLElement {
     .page-login-wrap {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: center;      
     }
 
     .sign-in-form {
@@ -160,6 +159,8 @@ class PageLogin extends HTMLElement {
       object-fit: cover;
       z-index: -1000;
       filter: brightness(0.5);
+      background-image: url(/img/cat.jpg);
+      background-size: cover;
     }
     </style>
     `;

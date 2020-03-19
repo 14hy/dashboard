@@ -28,9 +28,8 @@ class PageHome extends HTMLElement {
         <user-talk></user-talk>
       </main>
     </div>
-    <video autoplay loop poster="wind.jpg">
+    <video class="video-background" autoplay loop muted playsInline poster="wind.jpg">
       <source src="img/wind.webm" type="video/webm">
-      <source src="img/wind.mp4" type="video/mp4">
     </video>    
     `;
   }
@@ -170,6 +169,8 @@ class PageHome extends HTMLElement {
       object-fit: cover;
       z-index: -1000;
       filter: brightness(0.5);
+      background-image: url(/img/wind.jpg);
+      background-size: cover;
     }
 
     @media (max-width: 900px) {
