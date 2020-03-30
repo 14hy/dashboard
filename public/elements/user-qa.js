@@ -237,6 +237,10 @@ class UserQA extends HTMLElement {
         filter: brightness(0.9);
       }
 
+      table tr td {
+        text-align: center;
+      }
+
       table tr > th:nth-child(1) {
         display: none;
       }

@@ -111,6 +111,7 @@ class PageHome extends HTMLElement {
     
     .btn-aside {
       display: none;
+      z-index: 500;
     }
 
     aside {
@@ -198,7 +199,7 @@ class PageHome extends HTMLElement {
         cursor: pointer;
       }
 
-      .btn-aside:focus + aside {
+      .btn-aside:active + aside {
         left: 0rem;
       }
 

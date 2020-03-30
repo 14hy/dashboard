@@ -90,11 +90,11 @@ class UserTalk extends HTMLElement {
     }
     
     table tr > th:nth-child(1) {
-      width: calc(50% - 50px) !important;
+      min-width: 100px;
     }
 
     table tr > th:nth-child(2) {
-      width: calc(50% - 50px) !important;
+      min-width: 100px;
     }
 
     table tr > th:nth-child(3) {
